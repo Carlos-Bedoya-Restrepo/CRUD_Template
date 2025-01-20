@@ -1,16 +1,29 @@
 from pydantic import BaseModel
+from sqlmodel import SQLModel,Field
 
-class CustomerBase(BaseModel):
-    name:str
-    description:str | None 
-    email:str
-    age:int
 
-class CustomerCreate(CustomerBase):
+
+class CustomerBase(SQLModel):
+    name:str=Field(default=None)
+    description:str | None =Field(default=None)
+    email:str=Field(default=None)
+    age:int=Field(default=None)
+
+class CustomerCreate(CustomerBase): #esto es porque cuando se crea aveces necesita parametros de entrada como la contraseña
     pass
 
-class Customer(CustomerBase):
-    id:int | None =None
+
+class CustomerUpdate(CustomerBase): #esto es porque cuando se crea aveces necesita parametros de entrada como la contraseña
+    pass
+
+class Customer(CustomerBase,table=True):
+    id:int | None =Field(default=None,primary_key=True)
+
+
+
+
+
+#Para esta clase los modelos de abajo no se usan
 
 class Transaction(BaseModel):
     id: int
