@@ -3,13 +3,14 @@ from datetime import datetime
 import zoneinfo
 from models import Transaction, Invoice
 from db import SessionDep,create_all_tables
-from .routers import custormers, transactions
+from .routers import custormers, plans, transactions
 
 
 
 app=FastAPI(lifespan=create_all_tables)
 app.include_router(custormers.router)
 app.include_router(transactions.router)
+app.include_router(plans.router)
 
 @app.get("/")
 async def root():
