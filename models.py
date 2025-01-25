@@ -1,40 +1,46 @@
+from typing import List, Optional
 from pydantic import BaseModel
-from sqlmodel import SQLModel,Field
+from sqlmodel import SQLModel, Field, Relationship
 
-
-
+#####################################################################
 class CustomerBase(SQLModel):
-    name:str=Field(default=None)
-    description:str | None =Field(default=None)
-    email:str=Field(default=None)
-    age:int=Field(default=None)
+    name: str = Field(default=None)
+    description: Optional[str] = Field(default=None)
+    email: str = Field(default=None)
+    age: int = Field(default=None)
 
-class CustomerCreate(CustomerBase): #esto es porque cuando se crea aveces necesita parametros de entrada como la contraseña
+class CustomerCreate(CustomerBase):  # Esto es porque cuando se crea a veces necesita parámetros de entrada como la contraseña
     pass
 
-
-class CustomerUpdate(CustomerBase): #esto es porque cuando se crea aveces necesita parametros de entrada como la contraseña
+class CustomerUpdate(CustomerBase):  # Esto es porque cuando se crea a veces necesita parámetros de entrada como la contraseña
     pass
 
-class Customer(CustomerBase,table=True):
-    id:int | None =Field(default=None,primary_key=True)
+class Customer(CustomerBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    transactions: List["Transaction"] = Relationship(back_populates="customer")  # Relación bidireccional
+
+########################################################################
+
+class TransactionBase(SQLModel):
+    ammount: int = Field(default=None)
+    description: str = Field(default=None)
+
+class TransactionCreate(TransactionBase):
+    customer_id: Optional[int] = Field(foreign_key="customer.id")
 
 
+class Transaction(TransactionBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    customer_id: Optional[int] = Field(foreign_key="customer.id")
+    customer: Optional["Customer"] = Relationship(back_populates="transactions")  # Relación bidireccional
 
-
-
-#Para esta clase los modelos de abajo no se usan
-
-class Transaction(BaseModel):
-    id: int
-    ammount:int
-    description:str
+########################################################################
 
 class Invoice(BaseModel):
-    id:int
-    customer:Customer
-    transactions:list[Transaction]
-    total:int
+    id: int
+    customer: Customer
+    transactions: List[Transaction]
+    total: int
 
     @property
     def ammount_total(self):

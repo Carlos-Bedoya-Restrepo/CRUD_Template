@@ -3,12 +3,13 @@ from datetime import datetime
 import zoneinfo
 from models import Transaction, Invoice
 from db import SessionDep,create_all_tables
-from .routers import custormers
+from .routers import custormers, transactions
 
 
 
 app=FastAPI(lifespan=create_all_tables)
 app.include_router(custormers.router)
+app.include_router(transactions.router)
 
 @app.get("/")
 async def root():
@@ -29,13 +30,6 @@ async def time(iso_code: str):
 
 
 
-
-
-
-#Por ahora estos no estan muy elaborados
-@app.post("/transactions")
-async def create_transactions(transaction_data:Transaction):
-    return transaction_data
 
 @app.post("/invoices")
 async def create_invoice(invoice_data:Invoice):
