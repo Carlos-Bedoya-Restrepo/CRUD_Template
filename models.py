@@ -1,13 +1,21 @@
 from typing import List, Optional
 from pydantic import BaseModel
 from sqlmodel import SQLModel, Field, Relationship
+from enum import Enum
 
+
+
+class StatusEnum(str,Enum):
+    ACTIVE="active"
+    INACTIVE="inactive"
 
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 class CustomerPlan(SQLModel,table=True): #esta tabla relaciona ambas tablas para poder hacer *|*
     id:int =Field(primary_key=True)
     plan_id:int=Field(foreign_key="plan.id")
     customer_id:int=Field(foreign_key="customer.id")
+    status:StatusEnum=Field(default=StatusEnum.ACTIVE)
+
 #$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 class Plan(SQLModel,table=True):
@@ -32,7 +40,7 @@ class CustomerUpdate(CustomerBase):  # Esto es porque cuando se crea a veces nec
 
 class Customer(CustomerBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    transactions: List["Transaction"] = Relationship(back_populates="customer")  # Relación bidireccional
+    transactions: list["Transaction"] = Relationship(back_populates="customer")  # Relación bidireccional
     plans:list[Plan]=Relationship(back_populates="customers",link_model=CustomerPlan)
 ########################################################################
 
