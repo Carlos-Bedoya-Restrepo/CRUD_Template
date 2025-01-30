@@ -1,0 +1,14 @@
+# Archivos de Python compilados
+__pycache__/
+*.pyc
+*.pyo
+
+
+# Entorno virtual
+entorno_curso/
+
+# Ejecutables de Python
+*.exe
+
+# Ignorar configuraciones de Windows
+desktop.ini
